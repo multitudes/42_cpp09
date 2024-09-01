@@ -36,6 +36,65 @@ least 3000 different integers.
 Ok just to make sure you are following me, they are not the same :)
 The Ford-Johnson algorithm is a variant of merge sort, it's a specific optimization that aims to reduce the number of comparisons needed in the worst case scenario. So the wiki page is misleading. The Ford-Johnson algorithm employs a strategy to reduce the number of comparisons needed in the merging step, making it more efficient in terms of comparisons. While the Ford-Johnson algorithm is theoretically interesting for its comparison efficiency, it's not widely used in practice due to its potential overhead and complexity compared to standard merge sort implementations
 
+An example implementation of the ford johnson algorithm given to me by google gemini is as follows:
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+// Function to calculate the distance between two elements in an array
+int distance(const vector<int>& arr, int i, int j) {
+    return abs(arr[i] - arr[j]);
+}
+
+// Function to sort an array using the Ford-Johnson algorithm
+void fordJohnsonSort(vector<int>& arr) {
+    int n = arr.size();
+
+    // Base case: If there are only two elements, sort them
+    if (n <= 2) {
+        sort(arr.begin(), arr.end());
+        return;
+    }
+
+    // Divide the array into two halves
+    int mid = n / 2;
+    vector<int> left(arr.begin(), arr.begin() + mid);
+    vector<int> right(arr.begin() + mid, arr.end());
+
+    // Recursively sort  
+ the left and right halves
+    fordJohnsonSort(left);
+    fordJohnsonSort(right);
+
+    // Merge the sorted halves using Ford-Johnson's optimization
+    int i = 0, j = 0, k = 0;
+    while (i < left.size() && j < right.size()) {
+        if (left[i] <= right[j]) {
+            arr[k++] = left[i++];
+        } else {
+            arr[k++] = right[j++];
+            // Ford-Johnson optimization: If the difference between the current element in the right half and the last element in the left half is less than the difference between the current element in the left half and the last element in the right half,
+            // then swap the current elements in the left and right halves
+            if (i > 0 && distance(arr, k - 1, j) < distance(arr, i - 1, j)) {
+                swap(arr[k - 1], arr[k - 2]);
+            }
+        }
+    }
+
+    // Copy the remaining elements from the left or right half
+    while (i < left.size()) {
+        arr[k++] = left[i++];
+    }
+    while (j < right.size()) {
+        arr[k++] = right[j++];
+    }
+}
+```
+In the above code there is just one point where the algo differs from the standard merge sort.
+
 ## Links
 https://en.wikipedia.org/wiki/Merge-insertion_sort
 
